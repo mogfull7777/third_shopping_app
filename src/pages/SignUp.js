@@ -1,10 +1,14 @@
 import React, {useState} from 'react';
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
 
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState("");
-    const [Email, setEmail] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [thisChackBox, setThisChackBox] = useState(false);
@@ -20,17 +24,27 @@ const SignUp = () => {
                 alert("Please chack in the box.")
             }
 
-            const signUpList = [
-                {
-                    username : username,
-                    Email : Email,
+            const signUpList = {
+                    name : username,
+                    email : email,
                     password : password,
                     confirmPassword : confirmPassword,
                     thisChackBox : thisChackBox
-                }
-            ];
+                };
 
-            console.log(signUpList)
+            const result = await axios.post("http://localhost:9090/api/users/",signUpList)
+
+            // console.log(result, result.status)
+
+            if (result.status === 201){
+
+                alert("success signup")
+
+                navigate("/login")
+
+            }
+
+            console.log("***************", result)
 
         } catch (err) {
             console.log(err)
@@ -39,8 +53,9 @@ const SignUp = () => {
 
     return (
         <Container>
-            <Row>
-                <Col>
+            <Row className={"justify-content-center"}>
+                <Col xs={12} md={6} className={"mt-5"}>
+                    <h1>SIGN UP</h1>
                     <Form onSubmit={signUpSubnitHendle}>
 
                         <Form.Group className="mb-3" controlId="formBasicUsername">
@@ -58,7 +73,7 @@ const SignUp = () => {
                             <Form.Control
                                 type="email"
                                 placeholder="Enter email"
-                                value={Email}
+                                value={email}
                                 onChange={e => setEmail(e.target.value)}
                             />
                         </Form.Group>
